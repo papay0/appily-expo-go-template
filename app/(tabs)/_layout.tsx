@@ -13,8 +13,21 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+        headerShown: true,
         tabBarButton: HapticTab,
+        // Native iOS large title that collapses on scroll
+        headerLargeTitle: true,
+        headerTransparent: false,
+        headerBlurEffect: colorScheme === 'dark' ? 'dark' : 'light',
+        headerLargeTitleShadowVisible: false,
+
+        // Other available header options you can use:
+        // headerSearchBarOptions: { placeholder: 'Search...' }, // Native iOS search bar
+        // headerRight: () => <Button title="Add" onPress={() => {}} />, // Right button
+        // headerLeft: () => <Button title="Edit" onPress={() => {}} />, // Left button
+        // headerBackVisible: false, // Hide back button
+        // headerLargeStyle: { backgroundColor: 'red' }, // Style large title area
+        // headerStyle: { backgroundColor: 'blue' }, // Style collapsed header
       }}>
       <Tabs.Screen
         name="index"

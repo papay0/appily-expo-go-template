@@ -1,14 +1,16 @@
-import { StyleSheet, Switch, Appearance } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, Switch, Appearance, ScrollView } from 'react-native';
 import { useState, useEffect } from 'react';
 
-import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { TableViewGroup } from '@/components/ui/table-view-group';
+import { TableViewCell } from '@/components/ui/table-view-cell';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
   const [isDarkMode, setIsDarkMode] = useState(colorScheme === 'dark');
 
   useEffect(() => {
@@ -21,24 +23,34 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <ThemedView style={styles.content}>
-        <ThemedText type="title">Settings</ThemedText>
-
-        <ThemedView style={styles.settingRow}>
-          <ThemedView style={styles.settingInfo}>
-            <ThemedText type="defaultSemiBold">Dark Mode</ThemedText>
-            <ThemedText style={styles.settingDescription}>
-              Toggle between light and dark theme
-            </ThemedText>
-          </ThemedView>
-          <Switch
-            value={isDarkMode}
-            onValueChange={toggleTheme}
+    <ThemedView style={styles.container}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        contentInsetAdjustmentBehavior="automatic"
+      >
+        <TableViewGroup header="Appearance">
+          <TableViewCell
+            title="Dark Mode"
+            subtitle="Toggle between light and dark theme"
+            leftIcon={
+              <IconSymbol
+                name="moon.fill"
+                size={20}
+                color={colors.tint}
+              />
+            }
+            rightContent={
+              <Switch
+                value={isDarkMode}
+                onValueChange={toggleTheme}
+              />
+            }
+            showSeparator={false}
           />
-        </ThemedView>
-      </ThemedView>
-    </SafeAreaView>
+        </TableViewGroup>
+      </ScrollView>
+    </ThemedView>
   );
 }
 
@@ -46,23 +58,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  scrollView: {
+    flex: 1,
+  },
   content: {
-    flex: 1,
-    padding: 20,
-    gap: 24,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-  },
-  settingInfo: {
-    flex: 1,
-    gap: 4,
-  },
-  settingDescription: {
-    fontSize: 14,
-    opacity: 0.7,
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
 });

@@ -5,25 +5,37 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const tintColorLight = '#007AFF'; // iOS blue
+const tintColorDark = '#0A84FF'; // iOS dark mode blue
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
+    text: '#000000',
+    secondaryText: '#3C3C43',
+    tertiaryText: '#3C3C4399',
+    background: '#F2F2F7', // iOS system grouped background
+    secondaryBackground: '#FFFFFF', // iOS secondary grouped background
+    tertiaryBackground: '#F2F2F7',
     tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
+    icon: '#3C3C43',
+    tabIconDefault: '#3C3C43',
     tabIconSelected: tintColorLight,
+    separator: '#3C3C4329', // iOS separator
+    border: '#3C3C4336',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
+    text: '#FFFFFF',
+    secondaryText: '#EBEBF5',
+    tertiaryText: '#EBEBF599',
+    background: '#000000', // iOS dark system grouped background
+    secondaryBackground: '#1C1C1E', // iOS dark secondary grouped background
+    tertiaryBackground: '#2C2C2E',
     tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    icon: '#EBEBF5',
+    tabIconDefault: '#EBEBF5',
     tabIconSelected: tintColorDark,
+    separator: '#54545899', // iOS dark separator
+    border: '#54545836',
   },
 };
 
