@@ -4,11 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an Expo React Native application template designed for iOS-first development with native iOS design patterns. The project uses:
+This is an Expo React Native application template designed for iOS-first development with modern UI components. The project uses:
 - **Expo SDK 54** with React 19 and React Native 0.81
 - **Expo Router** for file-based navigation with typed routes
 - **New Architecture** enabled (React Compiler + bridgeless mode)
-- **iOS-native design system** with large titles, SF Symbols, and table views
+- **React Native Reusables** - Beautiful UI components based on shadcn/ui
+- **NativeWind** - Tailwind CSS for React Native
+- **Lucide Icons** - Beautiful & consistent icons
+- **Expo Go Compatible** - Works with Expo Go without native builds
 
 ## Commands
 
@@ -28,72 +31,111 @@ Note: User prefers to run `npm run dev` themselves, so do not start the dev serv
 
 ### Routing (expo-router)
 - File-based routing with `app/` directory
-- `app/_layout.tsx`: Root layout with Stack navigation and ThemeProvider
+- `app/_layout.tsx`: Root layout with Stack navigation, ThemeProvider, and PortalHost
 - `app/(tabs)/_layout.tsx`: Tab navigator with iOS large title headers
-- `app/(tabs)/index.tsx`: Home screen (first tab)
-- `app/(tabs)/explore.tsx`: Settings screen (second tab)
+- `app/(tabs)/index.tsx`: Home screen with "Building Your App" template
+- `app/(tabs)/explore.tsx`: Settings screen
 - `app/modal.tsx`: Modal screen example
 - Typed routes enabled via `experiments.typedRoutes`
 
+### UI Components (React Native Reusables)
+Located in `components/ui/`:
+- **Layout**: `Card`, `Separator`, `Skeleton`, `AspectRatio`
+- **Forms**: `Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Radio`, `Switch`, `Select`
+- **Feedback**: `Alert`, `AlertDialog`, `Dialog`, `Progress`, `Badge`
+- **Navigation**: `Tabs`, `Menubar`, `DropdownMenu`, `ContextMenu`
+- **Overlay**: `Popover`, `Tooltip`, `HoverCard`
+- **Typography**: `Text` (with variants: h1-h4, p, muted, lead, etc.)
+- **Data**: `Accordion`, `Collapsible`, `Avatar`
+- **Utility**: `Toggle`, `ToggleGroup`, `Icon`
+
 ### Theme System
-- `constants/theme.ts`: Centralized color and font definitions
-- `Colors` object with `light` and `dark` modes matching iOS system colors
-- `Fonts` object with platform-specific font families (iOS, web, default)
-- Colors follow iOS design guidelines (system grouped backgrounds, separators, etc.)
+Two theme systems coexist:
+1. **NativeWind/CSS Variables** (primary for new components):
+   - `global.css`: CSS variables for colors
+   - `tailwind.config.js`: Tailwind configuration
+   - `lib/theme.ts`: Navigation theme using CSS variable colors
 
-### Component Pattern
-All themed components follow this pattern:
-1. Accept optional `lightColor` and `darkColor` props for color overrides
-2. Use `useThemeColor()` hook to resolve colors from theme
-3. Use `useColorScheme()` hook to access current color scheme
-4. Located in `components/` directory
+2. **Legacy Theme** (for existing iOS components):
+   - `constants/theme.ts`: Colors and Fonts objects
+   - Used by `ThemedView`, `ThemedText`, `TableViewGroup`, etc.
 
-Key components:
-- `ThemedView`: Background-aware container
-- `ThemedText`: Text with theme colors and variants
-- `TableViewGroup` & `TableViewCell`: iOS-style grouped table views
-- `IconSymbol`: Platform-specific icon wrapper (uses expo-symbols on iOS)
-- `HapticTab`: Tab bar button with haptic feedback
+### Key Files
+- `babel.config.js`: Babel preset with NativeWind
+- `metro.config.js`: Metro config with NativeWind
+- `tailwind.config.js`: Tailwind CSS configuration
+- `global.css`: CSS variables for theming
+- `components.json`: shadcn/ui component configuration
+- `lib/utils.ts`: `cn()` utility for class merging
+- `lib/theme.ts`: Navigation theme configuration
 
-### Hooks
-- `use-color-scheme.ts`: Returns current color scheme, has platform-specific variants (`.web.ts`)
-- `use-theme-color.ts`: Resolves theme colors with optional overrides
+### Icons
+Two icon systems available:
+1. **Lucide Icons** (recommended for new components):
+   ```tsx
+   import { Icon } from '@/components/ui/icon';
+   import { Rocket } from 'lucide-react-native';
+   <Icon as={Rocket} size={24} className="text-primary" />
+   ```
+
+2. **IconSymbol** (for iOS SF Symbols):
+   ```tsx
+   import { IconSymbol } from '@/components/ui/icon-symbol';
+   <IconSymbol name="house.fill" size={28} color={color} />
+   ```
 
 ### Path Aliases
 - `@/` maps to the project root
-- Example: `import { Colors } from '@/constants/theme'`
+- Example: `import { Button } from '@/components/ui/button'`
 
-### iOS-Native Features
-The tab layout (`app/(tabs)/_layout.tsx`) is configured with iOS-native header options:
-- `headerLargeTitle: true` - Native iOS large titles that collapse on scroll
-- `headerBlurEffect` - Native blur backgrounds
-- Additional options available (see comments): `headerSearchBarOptions`, `headerRight`, `headerLeft`
+### Styling
+Use NativeWind (Tailwind) classes:
+```tsx
+<View className="flex-1 bg-background p-6">
+  <Text className="text-foreground font-semibold">Hello</Text>
+  <Button variant="outline" size="lg">
+    <Text>Click me</Text>
+  </Button>
+</View>
+```
 
-### Platform-Specific Files
-- `.ios.tsx` and `.tsx` variants for components (e.g., `icon-symbol.ios.tsx` uses expo-symbols, fallback uses Ionicons)
-- `.web.ts` variants for hooks when web needs different implementation
+Available color utilities:
+- `bg-background`, `text-foreground` - Main colors
+- `bg-primary`, `text-primary-foreground` - Primary brand
+- `bg-secondary`, `text-secondary-foreground` - Secondary
+- `bg-muted`, `text-muted-foreground` - Muted/subtle
+- `bg-accent`, `text-accent-foreground` - Accent
+- `bg-destructive` - Destructive/error
+- `bg-card`, `text-card-foreground` - Card backgrounds
+- `border-border`, `border-input` - Borders
+
+## Adding New Components
+
+Use the React Native Reusables CLI:
+```bash
+npx @react-native-reusables/cli@latest add button
+npx @react-native-reusables/cli@latest add -a  # Add all components
+npx @react-native-reusables/cli@latest doctor  # Check setup
+```
 
 ## Configuration Files
 
 ### app.json
-- Expo config with `newArchEnabled: true` (React Compiler + New Architecture)
-- iOS: supports tablet, predictive back gesture disabled
-- Android: edge-to-edge enabled, adaptive icon configured
-- Typed routes and React Compiler experimental features enabled
+- Expo config with `newArchEnabled: true`
+- Web bundler set to `metro` for NativeWind support
+- iOS: supports tablet
+- Android: edge-to-edge enabled
 
 ### tsconfig.json
 - Strict mode enabled
 - Path alias `@/*` configured
-- Extends `expo/tsconfig.base`
-
-### eslint.config.js
-- Uses Expo's flat config
-- Ignores `dist/` directory
+- NativeWind types via `nativewind-env.d.ts`
 
 ## Development Notes
 
-- **Do not run build** (`npm run build` doesn't exist) unless explicitly requested
-- The template focuses on iOS-first design with native patterns
-- Use SF Symbols on iOS via `expo-symbols` (IconSymbol component)
-- All screens use `contentInsetAdjustmentBehavior="automatic"` for proper safe area handling
-- Color scheme automatically switches between light/dark based on system settings
+- **Expo Go Compatible**: All dependencies work with Expo Go
+- **Do not run build** unless explicitly requested
+- Use `className` for styling with NativeWind
+- Use the `Text` component from `@/components/ui/text` for proper styling context
+- Dark mode is automatic based on system settings
+- `PortalHost` is required in root layout for overlays (Dialog, Popover, etc.)

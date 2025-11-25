@@ -1,35 +1,21 @@
 import { Link } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { Button } from '@/components/ui/button';
+import { Text } from '@/components/ui/text';
 
 export default function ModalScreen() {
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
-      <ThemedView style={styles.content}>
-        <ThemedText type="title">Modal</ThemedText>
-        <Link href="/" dismissTo style={styles.link}>
-          <ThemedText type="link">Go back</ThemedText>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom']}>
+      <View className="flex-1 items-center justify-center p-6">
+        <Text className="text-xl font-semibold mb-4">Modal</Text>
+        <Link href="/" dismissTo asChild>
+          <Button variant="outline">
+            <Text>Go Back</Text>
+          </Button>
         </Link>
-      </ThemedView>
+      </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-});
