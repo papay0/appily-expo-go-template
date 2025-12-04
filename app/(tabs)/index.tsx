@@ -1,4 +1,4 @@
-import { StyleSheet, ActivityIndicator } from 'react-native';
+import { StyleSheet, Pressable } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -9,15 +9,18 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
+  const triggerError = () => {
+    throw new Error('This is a test runtime error!');
+  };
+
   return (
     <ThemedView style={styles.container}>
-      <ActivityIndicator size="large" color={colors.tint} style={styles.spinner} />
-      <ThemedText style={styles.title}>
-        Your app is being built...
-      </ThemedText>
-      <ThemedText style={[styles.subtitle, { color: colors.secondaryText }]}>
-        This will only take a moment
-      </ThemedText>
+      <Pressable
+        style={[styles.button, { backgroundColor: colors.tint }]}
+        onPress={triggerError}
+      >
+        <ThemedText style={styles.buttonText}>Trigger Error</ThemedText>
+      </Pressable>
     </ThemedView>
   );
 }
@@ -29,17 +32,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 32,
   },
-  spinner: {
-    marginBottom: 24,
+  button: {
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 10,
   },
-  title: {
-    fontSize: 22,
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 17,
     fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
   },
 });
