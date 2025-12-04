@@ -1,4 +1,4 @@
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ActivityIndicator } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -11,20 +11,13 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        contentInsetAdjustmentBehavior="automatic"
-      >
-        <ThemedView style={styles.welcome}>
-          <ThemedText style={styles.welcomeText}>
-            Welcome!
-          </ThemedText>
-          <ThemedText style={[styles.subtitle, { color: colors.secondaryText }]}>
-            Start building your app here.
-          </ThemedText>
-        </ThemedView>
-      </ScrollView>
+      <ActivityIndicator size="large" color={colors.tint} style={styles.spinner} />
+      <ThemedText style={styles.title}>
+        Your app is being built...
+      </ThemedText>
+      <ThemedText style={[styles.subtitle, { color: colors.secondaryText }]}>
+        This will only take a moment
+      </ThemedText>
     </ThemedView>
   );
 }
@@ -32,25 +25,21 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
   },
-  scrollView: {
-    flex: 1,
+  spinner: {
+    marginBottom: 24,
   },
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 40,
-  },
-  welcome: {
-    gap: 8,
-  },
-  welcomeText: {
-    fontSize: 20,
+  title: {
+    fontSize: 22,
     fontWeight: '600',
-    lineHeight: 28,
+    textAlign: 'center',
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    lineHeight: 22,
+    textAlign: 'center',
   },
 });
