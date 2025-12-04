@@ -35,19 +35,18 @@ function setupGlobalErrorHandlers(): void {
 
   // Set up global JS exception handler
   ErrorUtils.setGlobalHandler((error: Error, isFatal?: boolean) => {
-    // Report to Appily backend first, then show Redbox
-    // We need to let the fetch start before the original handler potentially interrupts
+    // Report to Appily backend (fire and forget - XHR will complete in background)
     reportError({
       message: error.message || String(error),
       stack: error.stack,
       errorType: 'js_error',
       timestamp: new Date().toISOString(),
-    }).finally(() => {
-      // Call original handler after report is sent (shows Redbox in dev mode)
-      if (originalHandler) {
-        originalHandler(error, isFatal);
-      }
     });
+
+    // Call original handler (shows Redbox in dev mode)
+    if (originalHandler) {
+      originalHandler(error, isFatal);
+    }
   });
 
   // Set up unhandled promise rejection handler

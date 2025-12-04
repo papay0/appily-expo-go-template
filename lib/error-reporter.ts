@@ -43,7 +43,7 @@ interface ErrorReportPayload {
  */
 const CONFIG = {
   projectId: (Constants.expoConfig?.extra?.appilyProjectId as string) || '',
-  apiEndpoint: (Constants.expoConfig?.extra?.appilyApiUrl as string) || 'https://appily.dev',
+  apiEndpoint: (Constants.expoConfig?.extra?.appilyApiUrl as string) || 'https://www.appily.dev',
 };
 
 // Deduplication state to prevent flooding with identical errors
@@ -105,7 +105,7 @@ function parseStackTrace(stack?: string): { filename?: string; lineNumber?: numb
  *
  * @param error - The error details to report
  */
-export async function reportError(error: RuntimeError): Promise<void> {
+export function reportError(error: RuntimeError): void {
   // Skip if project ID not configured (template not yet set up)
   if (!CONFIG.projectId) {
     console.log('[Appily] Skipping error report - no project ID configured');
@@ -148,22 +148,20 @@ export async function reportError(error: RuntimeError): Promise<void> {
     },
   };
 
-  console.log('[Appily] Reporting error:', error.message);
+  const url = `${CONFIG.apiEndpoint}/api/errors/report`;
 
   try {
-    const response = await fetch(`${CONFIG.apiEndpoint}/api/errors/report`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
+    // Use XMLHttpRequest for more reliable delivery during error handling
+    // fetch() can be interrupted by the error handler, but XHR is more resilient
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
 
-    if (!response.ok) {
-      console.warn('[Appily] Failed to report error:', response.status);
-    } else {
-      console.log('[Appily] Error reported successfully');
-    }
+    xhr.onerror = () => {
+      console.warn('[Appily] Error report failed (network error)');
+    };
+
+    xhr.send(JSON.stringify(payload));
   } catch (e) {
     // Silently fail - don't break the app if error reporting fails
     console.warn('[Appily] Error reporting failed:', e);
