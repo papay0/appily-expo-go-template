@@ -1,7 +1,7 @@
 /**
  * AI Helper - Text Generation and Image Analysis for Appily Apps
  *
- * This module provides easy-to-use functions for AI features powered by GPT-4o.
+ * This module provides easy-to-use functions for AI features powered by GPT-5 mini.
  * Configuration is automatically loaded from app.json's extra field.
  *
  * Usage:
@@ -80,7 +80,7 @@ export function isAIEnabled(): boolean {
 }
 
 /**
- * Generate text using AI (GPT-4o)
+ * Generate text using AI (GPT-5 mini)
  *
  * @param prompt - What you want the AI to generate
  * @param systemPrompt - Optional context/instructions for the AI
@@ -131,7 +131,7 @@ export async function generateText(
 }
 
 /**
- * Analyze an image using AI vision (GPT-4o)
+ * Analyze an image using AI vision (GPT-5 mini)
  *
  * @param imageBase64 - Base64 encoded image data (with or without data: prefix)
  * @param prompt - What to analyze about the image
@@ -183,7 +183,7 @@ export async function analyzeImage(
 }
 
 /**
- * Analyze an image from URL using AI vision (GPT-4o)
+ * Analyze an image from URL using AI vision (GPT-5 mini)
  *
  * @param imageUrl - URL of the image to analyze
  * @param prompt - What to analyze about the image
