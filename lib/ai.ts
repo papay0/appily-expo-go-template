@@ -1,17 +1,27 @@
 /**
- * AI Helper - Text Generation and Image Analysis for Appily Apps
+ * AI Helper - Text Generation, Image Analysis, and Image Generation for Appily Apps
  *
- * This module provides easy-to-use functions for AI features powered by GPT-5 mini.
+ * This module provides easy-to-use functions for AI features:
+ * - Text generation powered by GPT-5 mini
+ * - Image analysis powered by GPT-5 mini
+ * - Image generation/editing powered by Gemini (Nano Banana Pro)
+ *
  * Configuration is automatically loaded from app.json's extra field.
  *
  * Usage:
- *   import { generateText, analyzeImage, checkAIQuota } from '@/lib/ai';
+ *   import { generateText, analyzeImage, generateImage, editImage, checkAIQuota } from '@/lib/ai';
  *
  *   // Generate text
  *   const poem = await generateText('Write a poem about the ocean');
  *
  *   // Analyze an image
  *   const result = await analyzeImage(base64Image, 'What breed is this dog?');
+ *
+ *   // Generate an image from text
+ *   const image = await generateImage('A sunset over mountains');
+ *
+ *   // Edit an existing image
+ *   const edited = await editImage(photoBase64, 'Add a rainbow in the sky');
  *
  *   // Check remaining quota
  *   const quota = await checkAIQuota();
@@ -258,5 +268,162 @@ export async function checkAIQuota(): Promise<AIQuotaResult> {
     remaining: data.data.remainingRequests,
     max: data.data.maxRequests,
     periodEnd: data.data.periodEnd,
+  };
+}
+
+// ============================================================================
+// IMAGE GENERATION (Gemini - Nano Banana Pro)
+// ============================================================================
+
+/**
+ * Supported aspect ratios for image generation
+ */
+export type ImageAspectRatio = '1:1' | '16:9' | '9:16' | '4:3' | '3:4' | '3:2' | '2:3';
+
+/**
+ * Supported image resolutions
+ */
+export type ImageResolution = '1K' | '2K';
+
+/**
+ * Options for image generation
+ */
+export interface ImageGenerationOptions {
+  /** Aspect ratio of the generated image (default: '1:1') */
+  aspectRatio?: ImageAspectRatio;
+  /** Resolution: '1K' (faster) or '2K' (higher quality) (default: '1K') */
+  resolution?: ImageResolution;
+}
+
+/**
+ * Response from image generation API
+ */
+export interface GenerateImageResult {
+  /** Full data URL for the generated image (data:image/png;base64,...) */
+  imageBase64: string;
+  /** Number of AI requests remaining this period */
+  remainingRequests: number;
+}
+
+/**
+ * Generate an image from a text prompt using AI (Gemini - Nano Banana Pro)
+ *
+ * @param prompt - Text description of the image to generate
+ * @param options - Optional settings for aspect ratio and resolution
+ * @returns The generated image as a data URL and remaining quota
+ *
+ * @example
+ * // Generate a simple image
+ * const result = await generateImage('A cute robot playing guitar on a beach');
+ * // Use result.imageBase64 directly in an Image component
+ *
+ * @example
+ * // Generate with custom options
+ * const result = await generateImage(
+ *   'A mountain landscape at sunset',
+ *   { aspectRatio: '16:9', resolution: '2K' }
+ * );
+ */
+export async function generateImage(
+  prompt: string,
+  options?: ImageGenerationOptions
+): Promise<GenerateImageResult> {
+  if (!CONFIG.projectId) {
+    throw new Error('AI not configured - project ID missing');
+  }
+
+  const response = await fetch(`${CONFIG.apiUrl}/api/ai/generate-image`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      projectId: CONFIG.projectId,
+      prompt,
+      aspectRatio: options?.aspectRatio || '1:1',
+      resolution: options?.resolution || '1K',
+    }),
+  });
+
+  const data: APIResponse<{
+    imageBase64: string;
+    mimeType: string;
+    remainingRequests: number;
+  }> = await response.json();
+
+  if (!data.success || !data.data) {
+    throw new Error(data.error?.message || 'AI image generation failed');
+  }
+
+  // Return as full data URL for easy use in Image components
+  return {
+    imageBase64: `data:${data.data.mimeType};base64,${data.data.imageBase64}`,
+    remainingRequests: data.data.remainingRequests,
+  };
+}
+
+/**
+ * Edit an existing image using AI (Gemini - Nano Banana Pro)
+ *
+ * This function allows you to modify photos with text instructions.
+ * Great for adding effects, changing backgrounds, adding objects, etc.
+ *
+ * @param imageBase64 - Base64-encoded source image (with or without data: prefix)
+ * @param prompt - Text description of the edits to make
+ * @param options - Optional settings for aspect ratio and resolution
+ * @returns The edited image as a data URL and remaining quota
+ *
+ * @example
+ * // Pick a photo and add something to it
+ * import * as ImagePicker from 'expo-image-picker';
+ *
+ * const picked = await ImagePicker.launchImageLibraryAsync({ base64: true });
+ * if (picked.assets?.[0]?.base64) {
+ *   const result = await editImage(
+ *     picked.assets[0].base64,
+ *     'Add a colorful parrot on my shoulder'
+ *   );
+ *   // result.imageBase64 contains the edited image
+ * }
+ *
+ * @example
+ * // Change outfit in a photo
+ * const result = await editImage(
+ *   selfieBase64,
+ *   'Change my shirt to a red Hawaiian shirt'
+ * );
+ */
+export async function editImage(
+  imageBase64: string,
+  prompt: string,
+  options?: ImageGenerationOptions
+): Promise<GenerateImageResult> {
+  if (!CONFIG.projectId) {
+    throw new Error('AI not configured - project ID missing');
+  }
+
+  const response = await fetch(`${CONFIG.apiUrl}/api/ai/generate-image`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      projectId: CONFIG.projectId,
+      prompt,
+      imageBase64,
+      aspectRatio: options?.aspectRatio || '1:1',
+      resolution: options?.resolution || '1K',
+    }),
+  });
+
+  const data: APIResponse<{
+    imageBase64: string;
+    mimeType: string;
+    remainingRequests: number;
+  }> = await response.json();
+
+  if (!data.success || !data.data) {
+    throw new Error(data.error?.message || 'AI image editing failed');
+  }
+
+  return {
+    imageBase64: `data:${data.data.mimeType};base64,${data.data.imageBase64}`,
+    remainingRequests: data.data.remainingRequests,
   };
 }
