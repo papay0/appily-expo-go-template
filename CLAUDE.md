@@ -108,6 +108,18 @@ The root layout (`app/_layout.tsx`) is configured with iOS-native header options
 - `headerLargeTitle: true` - Native iOS large titles that collapse on scroll
 - Additional options available: `headerSearchBarOptions`, `headerRight`, `headerLeft`, `headerBlurEffect`
 
+#### Disabling Large Titles (Smaller Header)
+If your app needs more screen space, disable large titles in `app/_layout.tsx`:
+```tsx
+<Stack.Screen
+  name="index"
+  options={{
+    title: 'My App',
+    headerLargeTitle: false,  // Use standard smaller header
+  }}
+/>
+```
+
 ### Platform-Specific Files
 - `.ios.tsx` and `.tsx` variants for components (e.g., `icon-symbol.ios.tsx` uses expo-symbols, fallback uses Ionicons)
 - `.web.ts` variants for hooks when web needs different implementation

@@ -124,6 +124,7 @@ export default function RootLayout() {
             name="index"
             options={{
               title: 'Home',
+              // Set to false for a smaller header that takes less space
               headerLargeTitle: true,
               headerRight: () => <SettingsButton />,
             }}
