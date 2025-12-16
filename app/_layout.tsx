@@ -3,6 +3,7 @@ import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { Pressable } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -117,36 +118,38 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ErrorBoundary>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen
-            name="index"
-            options={{
-              title: 'Home',
-              // Set to false for a smaller header that takes less space
-              headerLargeTitle: true,
-              headerRight: () => <SettingsButton />,
-            }}
-          />
-          <Stack.Screen
-            name="settings"
-            options={{
-              title: 'Settings',
-              headerLargeTitle: true,
-            }}
-          />
-          <Stack.Screen
-            name="modal"
-            options={{
-              presentation: 'modal',
-              title: 'Modal',
-              headerLargeTitle: false,
-            }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </ErrorBoundary>
+    <SafeAreaProvider>
+      <ErrorBoundary>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen
+              name="index"
+              options={{
+                title: 'Home',
+                // Set to false for a smaller header that takes less space
+                headerLargeTitle: true,
+                headerRight: () => <SettingsButton />,
+              }}
+            />
+            <Stack.Screen
+              name="settings"
+              options={{
+                title: 'Settings',
+                headerLargeTitle: true,
+              }}
+            />
+            <Stack.Screen
+              name="modal"
+              options={{
+                presentation: 'modal',
+                title: 'Modal',
+                headerLargeTitle: false,
+              }}
+            />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </ErrorBoundary>
+    </SafeAreaProvider>
   );
 }

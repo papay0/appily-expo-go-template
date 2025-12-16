@@ -151,6 +151,17 @@ If your app needs more screen space, disable large titles in `app/_layout.tsx`:
 - Use SF Symbols on iOS via `expo-symbols` (IconSymbol component)
 - Color scheme automatically switches between light/dark based on system settings
 
+### SafeArea Handling
+The app is wrapped with `SafeAreaProvider` in `app/_layout.tsx`. This enables proper safe area handling throughout the app.
+
+For screens that need safe area insets (e.g., custom headers), use:
+```tsx
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+const insets = useSafeAreaInsets();
+// Use insets.top, insets.bottom, insets.left, insets.right
+```
+
 ### ScrollView Requirement (Important!)
 **Always wrap screen content in a ScrollView** to ensure proper scrolling and safe area handling:
 ```tsx
