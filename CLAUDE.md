@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Note for AI Agents:** This is a template app. Feel free to modify, remove, or replace any code including the settings screen, header icons, navigation structure, etc. The patterns shown here are examples to follow, not requirements to keep.
+
 ## Project Overview
 
 This is an Expo React Native application template designed for iOS-first development with native iOS design patterns. The project uses:
@@ -59,8 +61,8 @@ import { Appearance } from 'react-native';
 Appearance.setColorScheme('dark' | 'light');
 ```
 
-#### Header Navigation Pattern
-See `app/_layout.tsx` for how to add header icons with navigation:
+#### Header Navigation Pattern (Template Example)
+The settings icon in `app/_layout.tsx` is just a template example. **AI agents should feel free to remove or modify it** based on the app's needs:
 ```tsx
 <Stack.Screen
   name="index"
@@ -72,6 +74,7 @@ See `app/_layout.tsx` for how to add header icons with navigation:
         </Pressable>
       </Link>
     ),
+    // Remove headerRight entirely if not needed
   }}
 />
 ```
@@ -146,5 +149,21 @@ If your app needs more screen space, disable large titles in `app/_layout.tsx`:
 - **Do not run build** (`npm run build` doesn't exist) unless explicitly requested
 - The template focuses on iOS-first design with native patterns
 - Use SF Symbols on iOS via `expo-symbols` (IconSymbol component)
-- All screens use `contentInsetAdjustmentBehavior="automatic"` for proper safe area handling
 - Color scheme automatically switches between light/dark based on system settings
+
+### ScrollView Requirement (Important!)
+**Always wrap screen content in a ScrollView** to ensure proper scrolling and safe area handling:
+```tsx
+<ThemedView style={{ flex: 1 }}>
+  <ScrollView
+    style={{ flex: 1 }}
+    contentContainerStyle={{ flexGrow: 1, padding: 16 }}
+    contentInsetAdjustmentBehavior="automatic"
+  >
+    {/* Your content here */}
+  </ScrollView>
+</ThemedView>
+```
+- `contentInsetAdjustmentBehavior="automatic"` handles iOS safe areas and header insets
+- `flexGrow: 1` on contentContainerStyle allows centering content in shorter screens
+- Without ScrollView, content may appear under the header or be cut off

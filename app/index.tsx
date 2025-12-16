@@ -1,4 +1,4 @@
-import { StyleSheet, ActivityIndicator } from 'react-native';
+import { StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -11,13 +11,20 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ActivityIndicator size="large" color={colors.tint} style={styles.spinner} />
-      <ThemedText style={styles.title}>
-        Your app is being built...
-      </ThemedText>
-      <ThemedText style={[styles.subtitle, { color: colors.secondaryText }]}>
-        This will only take a moment
-      </ThemedText>
+      {/* Always use ScrollView for screen content to handle safe areas and allow scrolling */}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+        contentInsetAdjustmentBehavior="automatic"
+      >
+        <ActivityIndicator size="large" color={colors.tint} style={styles.spinner} />
+        <ThemedText style={styles.title}>
+          Your app is being built...
+        </ThemedText>
+        <ThemedText style={[styles.subtitle, { color: colors.secondaryText }]}>
+          This will only take a moment
+        </ThemedText>
+      </ScrollView>
     </ThemedView>
   );
 }
@@ -25,9 +32,16 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  contentContainer: {
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 32,
+    paddingVertical: 20,
   },
   spinner: {
     marginBottom: 24,
