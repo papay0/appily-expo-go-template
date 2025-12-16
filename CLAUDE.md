@@ -29,13 +29,54 @@ Note: User prefers to run `npm run dev` themselves, so do not start the dev serv
 ### Routing (expo-router)
 - File-based routing with `app/` directory
 - `app/_layout.tsx`: Root layout with Stack navigation and ThemeProvider
-- `app/(tabs)/_layout.tsx`: Tab navigator with iOS large title headers
-- `app/(tabs)/index.tsx`: Home screen (first tab)
-- `app/(tabs)/explore.tsx`: Settings screen (second tab)
+- `app/index.tsx`: Home screen (default route)
+- `app/settings.tsx`: Settings screen with dark mode toggle
 - `app/modal.tsx`: Modal screen example
 - Typed routes enabled via `experiments.typedRoutes`
 
-### Theme System
+### Theme System (Dark/Light Mode)
+
+This project has a complete dark/light mode system. AI agents should use these patterns:
+
+#### Using Theme Colors
+```tsx
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
+
+const colorScheme = useColorScheme();
+const colors = Colors[colorScheme ?? 'light'];
+// Access: colors.text, colors.background, colors.tint, colors.secondaryText, etc.
+```
+
+#### Themed Components
+- `ThemedView` - Use instead of View for themed backgrounds
+- `ThemedText` - Use instead of Text for themed text colors
+
+#### Theme Toggle Example
+See `app/settings.tsx` for a complete dark mode toggle implementation using:
+```tsx
+import { Appearance } from 'react-native';
+Appearance.setColorScheme('dark' | 'light');
+```
+
+#### Header Navigation Pattern
+See `app/_layout.tsx` for how to add header icons with navigation:
+```tsx
+<Stack.Screen
+  name="index"
+  options={{
+    headerRight: () => (
+      <Link href="/settings" asChild>
+        <Pressable>
+          <IconSymbol name="gearshape" size={24} color={colors.tint} />
+        </Pressable>
+      </Link>
+    ),
+  }}
+/>
+```
+
+### Color Definitions
 - `constants/theme.ts`: Centralized color and font definitions
 - `Colors` object with `light` and `dark` modes matching iOS system colors
 - `Fonts` object with platform-specific font families (iOS, web, default)
@@ -53,7 +94,6 @@ Key components:
 - `ThemedText`: Text with theme colors and variants
 - `TableViewGroup` & `TableViewCell`: iOS-style grouped table views
 - `IconSymbol`: Platform-specific icon wrapper (uses expo-symbols on iOS)
-- `HapticTab`: Tab bar button with haptic feedback
 
 ### Hooks
 - `use-color-scheme.ts`: Returns current color scheme, has platform-specific variants (`.web.ts`)
@@ -64,10 +104,9 @@ Key components:
 - Example: `import { Colors } from '@/constants/theme'`
 
 ### iOS-Native Features
-The tab layout (`app/(tabs)/_layout.tsx`) is configured with iOS-native header options:
+The root layout (`app/_layout.tsx`) is configured with iOS-native header options:
 - `headerLargeTitle: true` - Native iOS large titles that collapse on scroll
-- `headerBlurEffect` - Native blur backgrounds
-- Additional options available (see comments): `headerSearchBarOptions`, `headerRight`, `headerLeft`
+- Additional options available: `headerSearchBarOptions`, `headerRight`, `headerLeft`, `headerBlurEffect`
 
 ### Platform-Specific Files
 - `.ios.tsx` and `.tsx` variants for components (e.g., `icon-symbol.ios.tsx` uses expo-symbols, fallback uses Ionicons)

@@ -1,12 +1,44 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { Pressable } from 'react-native';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { reportError, isErrorReportingEnabled } from '@/lib/error-reporter';
+
+function SettingsButton() {
+  const router = useRouter();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+
+  // iOS 26 workaround: header buttons need minWidth 36 and centered content
+  // See: https://github.com/software-mansion/react-native-screens/issues/2990
+  return (
+    <Pressable
+      onPress={() => router.push('/settings')}
+      style={{
+        minWidth: 36,
+        minHeight: 36,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {({ pressed }) => (
+        <Ionicons
+          name="settings-outline"
+          size={24}
+          color={colors.tint}
+          style={{ opacity: pressed ? 0.5 : 1 }}
+        />
+      )}
+    </Pressable>
+  );
+}
 
 // Declare ErrorUtils type (React Native internal)
 declare const ErrorUtils: {
@@ -76,10 +108,6 @@ function setupGlobalErrorHandlers(): void {
   }
 }
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
@@ -93,11 +121,18 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen
-            name="(tabs)"
+            name="index"
             options={{
-              headerShown: false,
-              title: 'Back',
-              headerBackTitle: 'Back',
+              title: 'Home',
+              headerLargeTitle: true,
+              headerRight: () => <SettingsButton />,
+            }}
+          />
+          <Stack.Screen
+            name="settings"
+            options={{
+              title: 'Settings',
+              headerLargeTitle: true,
             }}
           />
           <Stack.Screen
