@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "convex:deploy": "npx convex dev --once --typecheck=disable && rm -rf node_modules/.cache .expo"
+    "convex:deploy": "npx convex dev --once --typecheck=disable && rm -rf node_modules/.cache .expo && tmux send-keys -t metro R"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
