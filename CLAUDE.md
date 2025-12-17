@@ -178,3 +178,77 @@ const insets = useSafeAreaInsets();
 - `contentInsetAdjustmentBehavior="automatic"` handles iOS safe areas and header insets
 - `flexGrow: 1` on contentContainerStyle allows centering content in shorter screens
 - Without ScrollView, content may appear under the header or be cut off
+
+### Keyboard Handling for Forms (CRITICAL!)
+
+Any screen with TextInput fields **MUST** handle keyboard properly to avoid these common bugs:
+1. Input hidden behind keyboard
+2. Can't tap submit button when keyboard is open
+3. Keyboard won't dismiss when tapping outside
+4. Layout jumps/glitches when keyboard opens
+
+**See the complete example at:** `examples/form-pattern.tsx`
+
+**Quick Reference Pattern:**
+```tsx
+import { useRef } from 'react';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from 'react-native';
+
+function FormScreen() {
+  const nextFieldRef = useRef<TextInput>(null);
+
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={{ padding: 20 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <TextInput
+            returnKeyType="next"
+            onSubmitEditing={() => nextFieldRef.current?.focus()}
+            blurOnSubmit={false}
+          />
+          <TextInput
+            ref={nextFieldRef}
+            returnKeyType="done"
+            onSubmitEditing={handleSubmit}
+          />
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+  );
+}
+```
+
+**Key Requirements:**
+- `KeyboardAvoidingView` wraps the form content
+- **iOS:** `behavior="padding"` + `keyboardVerticalOffset` (header height ~100)
+- **Android:** `behavior={undefined}` - Android handles this automatically
+- `TouchableWithoutFeedback` with `Keyboard.dismiss()` to dismiss on tap outside
+- `keyboardShouldPersistTaps="handled"` so buttons work while keyboard is open
+- `returnKeyType` + `onSubmitEditing` for field navigation
+
+**Themed TextInput Component:**
+Use the `ThemedTextInput` component from `components/ui/themed-text-input.tsx` for consistent styling:
+```tsx
+import { ThemedTextInput } from '@/components/ui/themed-text-input';
+
+<ThemedTextInput
+  label="Email"
+  placeholder="you@example.com"
+  keyboardType="email-address"
+  error={emailError}
+/>
+```
