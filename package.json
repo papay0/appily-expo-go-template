@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "convex:deploy": "npx convex dev --once --typecheck=disable && rm -rf node_modules/.cache .expo /tmp/metro-* /tmp/haste-map-* && tmux kill-session -t metro 2>/dev/null; tmux new-session -d -s metro 'cd /home/user/project && NODE_OPTIONS=\"--max-old-space-size=3072\" npx expo start --tunnel'"
+    "convex:deploy": "npx convex dev --once --typecheck=disable"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

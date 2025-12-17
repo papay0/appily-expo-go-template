@@ -7,4 +7,10 @@ const config = getDefaultConfig(__dirname);
 // that get blocked when Metro enforces the package's "exports" field.
 config.resolver.unstable_enablePackageExports = false;
 
+// Prefer ESM over CJS - ESM builds have cleaner import resolution
+config.resolver.resolverMainFields = ['react-native', 'browser', 'module', 'main'];
+
+// Ensure Metro watches node_modules for changes (helps with Convex _generated)
+config.watchFolders = config.watchFolders || [];
+
 module.exports = config;
