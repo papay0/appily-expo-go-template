@@ -144,6 +144,22 @@ If your app needs more screen space, disable large titles in `app/_layout.tsx`:
 - Uses Expo's flat config
 - Ignores `dist/` directory
 
+## Pre-installed Packages
+
+### Convex (Already Installed!)
+**DO NOT run `npx expo install convex` or `npm install convex`** - Convex is already in package.json.
+Just start using Convex imports directly:
+```typescript
+// In React Native components:
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../convex/_generated/api";
+```
+
+Deploy Convex functions with:
+```bash
+npm run convex:deploy
+```
+
 ## Development Notes
 
 - **Do not run build** (`npm run build` doesn't exist) unless explicitly requested
